@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '@repo/backend-common/config';
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 
 
@@ -56,30 +56,51 @@ app.post('/signup', async (req: Request, res: Response): Promise<any> => {
   return res.status(200).json({ message: 'User created successfully' });
 
 });
-app.post('/room', middleware, async (req:Request, res:Response):Promise<any> => {
-
+app.post('/room', middleware, async (req: Request, res: Response): Promise<any> => {
+  try {
     const result = createRoomSchema.safeParse(req.body);
-    try{
-      if(!result.success) {
-          return res.status(400).json({ message: 'Invalid data', errors: result.error.errors });
-      }
-      // @ts-ignore
-      const userId = req.userId;
-      const room  = await prisma.room.create({
-        data: {
-          slug: result.data.name,
-          adminId: userId,
-        }
-      })
-      return res.status(200).json({ message: 'Room created successfully', room: room });
 
+    if (!result.success) {
+      return res.status(400).json({ message: 'Invalid data', errors: result.error.errors });
     }
-    catch (error) {
-      return res.status(411).json({ message: 'Room already exist with this name.', errors: error });
-    }
-  
 
+    // @ts-ignore
+    const userId = req.userId;
+    
+    const room = await prisma.room.create({
+      data: {
+        slug: result.data.name,
+        adminId: userId,
+      },
+    });
+
+    return res.status(200).json({ message: 'Room created successfully', room });
+  } catch (error: any) {
+    if (error.code === 'P2002') { // Prisma unique constraint violation
+      return res.status(409).json({ message: 'Room already exists with this name.' });
+    }
+
+    return res.status(500).json({ message: 'Internal server error', errors: error });
+  }
 });
+app.get("/chats/:roomId", middleware, async (req: Request, res: Response):Promise<any> =>{
+  const roomId = Number(req.params.roomId);
+  // @ts-ignore
+  const userId = req.userId;
+  const chats = await prisma.chat.findMany({
+    where:{
+      roomId:roomId
+    },
+    orderBy:{
+      id:'desc'
+    },
+    take:50
+  })
+  if(chats.length === 0){
+    return res.status(404).json({message:'Chats not found'})
+  }
+  return res.status(200).json({message:'Chats fetched successfully', chats})
+})
 app.listen(port, () => {
   console.log(`HTTP server is running at http://${host}:${port}`);
 });
