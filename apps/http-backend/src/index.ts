@@ -99,8 +99,33 @@ app.get("/chats/:roomId", middleware, async (req: Request, res: Response):Promis
   if(chats.length === 0){
     return res.status(404).json({message:'Chats not found'})
   }
-  return res.status(200).json({message:'Chats fetched successfully', chats})
+  return res.status(200).json({chats})
 })
+
+app.get('/room/:slug', middleware, async (req: Request, res: Response): Promise<any> => {
+  try{
+ const slug = req.params.slug;
+  // @ts-ignore
+  const userId = req.userId;
+  const room = await prisma.room.findUnique({
+    where: {
+      slug: slug
+    }
+  })
+  if (!room) {
+    return res.status(404).json({ message: 'Room not found' });
+  }
+  return res.status(200).json({ message: 'Room fetched successfully', id: room.id });
+  }
+  catch (error: any) {
+    if (error.code === 'P2002') { // Prisma unique constraint violation
+      return res.status(409).json({ message: 'Room already exists with this name.' });
+    }
+
+    return res.status(500).json({ message: 'Internal server error', errors: error });
+  }
+ 
+});
 app.listen(port, () => {
   console.log(`HTTP server is running at http://${host}:${port}`);
 });
