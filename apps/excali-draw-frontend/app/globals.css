@@ -1,0 +1,63 @@
+@import "tailwindcss";
+:root {
+  /* Base Colors */
+
+
+  /* UI Colors */
+  --primary: #2563eb; /* Blue-600 */
+  --primary-foreground: #ffffff;
+
+  --secondary: #f3f4f6; /* Gray-100 */
+  --secondary-foreground: #111827;
+
+  --muted: #f9fafb; /* Gray-50 */
+  --muted-foreground: #6b7280; /* Gray-500 */
+
+  --accent: #e0f2fe; /* Light blue-100 */
+  --accent-foreground: #0369a1; /* Sky-700 */
+
+  --border: #e5e7eb; /* Gray-200 */
+  --input: #d1d5db; /* Gray-300 */
+  --ring: #93c5fd; /* Blue-300 */
+
+  /* Fonts */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@theme {
+  --color-background: var(--primary);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Base Colors */
+ 
+
+    /* UI Colors */
+    --primary: #3b82f6; /* Blue-500 */
+    --primary-foreground: #ffffff;
+
+    --secondary: #1f2937; /* Gray-800 */
+    --secondary-foreground: #f3f4f6; /* Gray-100 */
+
+    --muted: #1c1c1c;
+    --muted-foreground: #9ca3af;
+
+    --accent: #1e40af; /* Blue-900 */
+    --accent-foreground: #dbeafe; /* Blue-100 */
+
+    --border: #374151; /* Gray-700 */
+    --input: #4b5563; /* Gray-600 */
+    --ring: #60a5fa; /* Blue-400 */
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
