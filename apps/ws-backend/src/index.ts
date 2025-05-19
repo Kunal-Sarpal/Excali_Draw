@@ -49,7 +49,7 @@ wss.on("connection", function connection(ws, request) {
     } else {
       parsedData = JSON.parse(data); // {type: "join-room", roomId: 1}
     }
-
+    console.log(parsedData)
       if (parsedData.type === "join_room") {
         console.log("User joined")
         if (!user.rooms.includes(parsedData.roomId)) {

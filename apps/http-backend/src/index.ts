@@ -5,14 +5,18 @@ import { prisma } from '@repo/db/client'
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '@repo/backend-common/config';
+import cors from 'cors'
 const app = express();
-const port = process.env.PORT || 3001;
+const port = 3005;
 
 
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
-const host = process.env.HOST || 'localhost';
+app.use(cors({
+  origin:"*"
+}));
+const host = 'localhost';
 
 app.post('/signin', async (req: Request, res: Response): Promise<any> => {
 
@@ -96,9 +100,6 @@ app.get("/chats/:roomId", middleware, async (req: Request, res: Response):Promis
     },
     take:50
   })
-  if(chats.length === 0){
-    return res.status(404).json({message:'Chats not found'})
-  }
   return res.status(200).json({chats})
 })
 
